@@ -1,6 +1,13 @@
 var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 var speed = 1/16/1000;
+var backCanvas = document.createElement('canvas');
+backCanvas.width = canvas.width;
+backCanvas.height = canvas.height;
+var backCtx = backCanvas.getContext('2d');
+
+var image = new Image();
+image.src = "C:/Users/cj/Pictures/pictures/galaxy-wallpapers-22-1.jpg";
 
 var x = 0;
 var y = 0;
@@ -62,13 +69,31 @@ window.onkeyup = function(event){
   }
 }
 
-function loop(){
-  ctx.fillStyle = "red";
-  ctx.fillRect(x,y,5,5);
+function loop(timestamp){
+
   if(input.up) y -=1;
   if(input.down) y+=1;
   if(input.right) x+=1;
   if(input.left) x-=1;
-  setTimeout(loop, speed);
+
+  backCtx.clearRect(0,0 , canvas.width, canvas.height);
+  backCtx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  for(i=0; i< 100; i++){
+    backCtx.fillStyle = "blue";
+    backCtx.fillRect(
+      (i*20)%100,
+      (i*20)%100, 10,10);
+  }
+
+  backCtx.fillStyle = "red";
+  backCtx.fillRect(x,y,5,5);
+
+  //swap buffers
+  ctx.drawImage(backCanvas, 0,0);
+
+  requestAnimationFrame(loop);
+  //setTimeout(loop,speed);
 }
-loop();
+//var intervalId = setInterval(loop, speed);
+//loop();
+requestAnimationFrame(loop);
